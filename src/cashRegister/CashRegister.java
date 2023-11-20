@@ -7,8 +7,8 @@ import storage.Storage;
 import java.util.ArrayList;
 
 public class CashRegister {
-    private Storage newStorage = new Storage();
-    private void StartStore(){
+    public Storage newStorage = new Storage();
+    public void StartStore(){
         Cookie chom = new Cookie("Galleta Chom", 0.8f, 20, "naranja");
         Cookie rellenita = new Cookie("Galleta Rellenita", 0.3f, 30, "chocolate");
         Soda inka = new Soda("Inka-Cola", 5.5f, 10, 2.5f);
