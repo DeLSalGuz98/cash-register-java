@@ -1,51 +1,81 @@
 package cashRegister;
 
+import product.Cookie;
+import product.Soda;
+import storage.Storage;
+
+import java.util.ArrayList;
+
 public class CashRegister {
-    //comprar items
-    public String BuyProduct(int index){
-        String message="";
-        switch (index){
-            case 1:
-                message = "comprando galleta chom";
-                break;
-            case 2:
-                message = "comprando galleta rellenita";
-                break;
-            case 3:
-                message = "comprando gaseosa inkacola";
-                break;
-            case 4:
-                message = "comprando gaseosa cocacola";
-                break;
-            default:
-                message = "opcion invalida";
-                break;
+    private Storage newStorage = new Storage();
+    private void StartStore(){
+        Cookie chom = new Cookie("Galleta Chom", 0.8f, 20, "naranja");
+        Cookie rellenita = new Cookie("Galleta Rellenita", 0.3f, 30, "chocolate");
+        Soda inka = new Soda("Inka-Cola", 5.5f, 10, 2.5f);
+        Soda coca = new Soda("Coca-Cola", 6.8f, 10, 2.5f);
+        newStorage.SaveProduct(chom);
+        newStorage.SaveProduct(rellenita);
+        newStorage.SaveProduct(inka);
+        newStorage.SaveProduct(coca);
+    }
+    private void CreateInvoice(String nameProduct, int option, int quantity, float price){
+        Invoice newInvoice = new Invoice();
+        newInvoice.setNameProduct(nameProduct);
+        newInvoice.setTypeInvoice(option);
+        newInvoice.setQuantity(quantity);
+        newInvoice.setTotalPrice(price);
+
+        newStorage.SaveInvoice(newInvoice);
+    }
+    public String BuyProduct(int index, int quantity){
+        String message ="";
+        if(index == 1 || index == 2){
+            Cookie mycookie = (Cookie)newStorage.FindProduct(index);
+            int newQuantity = mycookie.getQuantity() + quantity;
+            mycookie.setQuantity(newQuantity);
+            CreateInvoice(mycookie.getNameProduct(), 1, quantity, mycookie.getPurchasePrice());
+            message = "Compra de galletas Satisfactoria";
+        }else if(index == 3 || index == 4){
+            Soda mySoda = (Soda)newStorage.FindProduct(index);
+            int newQuantity = mySoda.getQuantity() + quantity;
+            mySoda.setQuantity(newQuantity);
+            CreateInvoice(mySoda.getNameProduct(), 1, quantity, mySoda.getPurchasePrice());
+            message = "Compra de gaseosa Satisfactoria";
+        }else{
+            return "Compra no Realizada";
         }
         return message;
     }
     //vender items
-    public String SellProduct(int index){
+    public String SellProduct(int index, int quantity){
         String message="";
-        switch (index){
-            case 1:
-                message = "vendiendo galleta chom";
-                break;
-            case 2:
-                message = "vendiendo galleta rellenita";
-                break;
-            case 3:
-                message = "vendiendo gaseosa inkacola";
-                break;
-            case 4:
-                message = "vendiendo gaseosa cocacola";
-                break;
-            default:
-                message = "opcion invalida";
-                break;
+        if(index == 1 || index == 2){
+            Cookie mycookie = (Cookie)newStorage.FindProduct(index);
+            if(mycookie.getQuantity() >= quantity){
+                int newQuantity = mycookie.getQuantity() - quantity;
+                mycookie.setQuantity(newQuantity);
+                CreateInvoice(mycookie.getNameProduct(), 2, quantity, mycookie.getSellingPrice());
+            }
+            message = "Venta de galletas Satisfactoria";
+        }else if(index == 3 || index == 4){
+            Soda mySoda = (Soda)newStorage.FindProduct(index);
+            if(mySoda.getQuantity() >= quantity){
+                int newQuantity = mySoda.getQuantity() - quantity;
+                mySoda.setQuantity(newQuantity);
+                CreateInvoice(mySoda.getNameProduct(), 2, quantity, mySoda.getSellingPrice());
+            }
+            message = "Venta de gaseosa Satisfactoria";
+        }else{
+            return "Venta no Realizada";
         }
         return message;
     }
-    //registrar compras de productos
+    public ArrayList GetAllPurchaseInvoice(){
+        return  newStorage.GetAllPurchaseInovoice();
+    }
+    public ArrayList GetAllSellInvoice(){
+        return newStorage.GetAllSellInovoice();
+    }
     //registrar ventas
 
 }
